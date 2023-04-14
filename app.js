@@ -19,10 +19,12 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.use(router);
+
 app.use((req, res) => {
   res.status(ERROR_NOT_FOUND).send({ message: 'Произошла ошибка' });
 });
-app.use(router);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
