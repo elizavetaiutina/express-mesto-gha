@@ -40,12 +40,18 @@ const deleteCard = (req, res) => {
     .then((card) => {
       if (!card) {
         return res
-          .status(ERROR_CODE)
+          .status(ERROR_NOT_FOUND)
           .send({ message: 'Запрашиваемая карта не найдена' });
       }
       return res.send(card);
     })
     .catch((err) => {
+      if (err.name === 'CastError') {
+        res
+          .status(ERROR_CODE)
+          .send({ message: 'Некорректное значение id карты' });
+        return;
+      }
       res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
     });
 };
