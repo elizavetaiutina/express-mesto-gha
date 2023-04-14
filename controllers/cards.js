@@ -9,8 +9,9 @@ const {
 const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch(() =>
-      res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' })
+    .catch(
+      () => res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' })
+      // eslint-disable-next-line function-paren-newline
     );
 };
 

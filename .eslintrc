@@ -1,5 +1,14 @@
 {
-  "extends": "airbnb-base",
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2021": true
+  },
+
+  "extends": ["airbnb-base"],
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
   "rules": {
     "no-underscore-dangle": [
       "error",
@@ -8,6 +17,7 @@
       }
     ],
     "no-console": "off",
-    "devDependencies": true
+    "comma-dangle": ["error", "only-multiline"],
+    "implicit-arrow-linebreak": ["error", "beside"]
   }
 }

@@ -11,13 +11,11 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // ссылка на модель автора карточки, тип ObjectId, обязательное поле;
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
     required: true,
   },
-  // список лайкнувших пост пользователей, массив ObjectId, по умолчанию — пустой массив (поле default);
   likes: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -25,7 +23,6 @@ const cardSchema = new mongoose.Schema({
       default: [],
     },
   ],
-  // дата создания, тип Date, значение по умолчанию Date.now.
   createdAt: {
     type: Date,
     default: Date.now,

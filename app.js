@@ -2,6 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const router = require('./routes');
+// eslint-disable-next-line import/no-unresolved, import/extensions
+const { ERROR_NOT_FOUND } = require('../utils/constants.js');
+
 const { PORT = 3000 } = process.env;
 
 const app = express();
@@ -16,6 +19,9 @@ app.use((req, res, next) => {
   };
 
   next();
+});
+app.use((req, res) => {
+  res.status(ERROR_NOT_FOUND).send({ message: 'Произошла ошибка' });
 });
 app.use(router);
 

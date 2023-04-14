@@ -9,8 +9,9 @@ const {
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(() =>
-      res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' })
+    .catch(
+      () => res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' })
+      // eslint-disable-next-line function-paren-newline
     );
 };
 
@@ -81,7 +82,7 @@ const updateAvatar = (req, res) => {
   const { _id } = req.user;
 
   User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true })
-    .then((updateAvatar) => res.send(updateAvatar))
+    .then((newAvatar) => res.send(newAvatar))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res
