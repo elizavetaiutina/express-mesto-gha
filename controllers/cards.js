@@ -40,7 +40,7 @@ const deleteCard = (req, res) => {
     .then((card) => {
       if (!card) {
         return res
-          .status(ERROR_NOT_FOUND)
+          .status(ERROR_CODE)
           .send({ message: 'Запрашиваемая карта не найдена' });
       }
       return res.send(card);
@@ -68,7 +68,7 @@ const addLikeCard = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res
-          .status(ERROR_NOT_FOUND)
+          .status(ERROR_CODE)
           .send({ message: 'Некорректное значение id карты' });
         return;
       }
@@ -94,7 +94,7 @@ const deleteLikeCard = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res
-          .status(ERROR_NOT_FOUND)
+          .status(ERROR_CODE)
           .send({ message: 'Некорректное значение id карты' });
         return;
       }
