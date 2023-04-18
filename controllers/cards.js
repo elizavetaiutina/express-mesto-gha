@@ -3,6 +3,7 @@ const {
   ERROR_CODE,
   ERROR_NOT_FOUND,
   ERROR_DEFAULT,
+  TEXT_ERROR_DEFAULT,
 } = require('../utils/constants');
 
 // ВОЗВРАЩАЕТ ВСЕ КАРТОЧКИ
@@ -10,7 +11,7 @@ const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send(cards))
     .catch(
-      () => res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' })
+      () => res.status(ERROR_DEFAULT).send({ message: TEXT_ERROR_DEFAULT })
       // eslint-disable-next-line function-paren-newline
     );
 };
@@ -31,7 +32,7 @@ const createCard = (req, res) => {
           .send({ message: 'Некорректно заполнены поля ввода' });
         return;
       }
-      res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
+      res.status(ERROR_DEFAULT).send({ message: TEXT_ERROR_DEFAULT });
     });
 };
 
@@ -53,7 +54,7 @@ const deleteCard = (req, res) => {
           .send({ message: 'Некорректное значение id карты' });
         return;
       }
-      res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
+      res.status(ERROR_DEFAULT).send({ message: TEXT_ERROR_DEFAULT });
     });
 };
 
@@ -79,7 +80,7 @@ const addLikeCard = (req, res) => {
           .send({ message: 'Некорректное значение id карты' });
         return;
       }
-      res.status(ERROR_DEFAULT).send({ err, message: 'Произошла ошибка' });
+      res.status(ERROR_DEFAULT).send({ err, message: TEXT_ERROR_DEFAULT });
     });
 };
 
@@ -105,7 +106,7 @@ const deleteLikeCard = (req, res) => {
           .send({ message: 'Некорректное значение id карты' });
         return;
       }
-      res.status(ERROR_DEFAULT).send({ err, message: 'Произошла ошибка' });
+      res.status(ERROR_DEFAULT).send({ err, message: TEXT_ERROR_DEFAULT });
     });
 };
 
