@@ -45,6 +45,11 @@ const deleteCard = (req, res) => {
           .status(ERROR_NOT_FOUND)
           .send({ message: 'Запрашиваемая карта не найдена' });
       }
+      if (card.owner.toString() !== req.user._id) {
+        return res
+          .status(403)
+          .send({ message: 'Недостаточно прав для удаления карты' });
+      }
       return res.send(card);
     })
     .catch((err) => {

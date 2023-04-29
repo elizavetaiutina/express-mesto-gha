@@ -9,6 +9,7 @@
   "parserOptions": {
     "ecmaVersion": "latest"
   },
+  "overrides": [],
   "rules": {
     "no-underscore-dangle": [
       "error",
@@ -17,7 +18,18 @@
       }
     ],
     "no-console": "off",
-    "comma-dangle": ["error", "only-multiline"],
-    "implicit-arrow-linebreak": ["error", "beside"]
+    "comma-dangle": "off",
+    "implicit-arrow-linebreak": ["error", "beside"],
+    "object-curly-newline": "off",
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": false,
+        "optionalDependencies": false,
+        "peerDependencies": false,
+        "packageDir": "./"
+      }
+    ],
+    "plugins": ["import"]
   }
 }

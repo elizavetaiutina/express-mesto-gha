@@ -1,3 +1,6 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
 const User = require('../models/user');
 const {
   ERROR_CODE,
@@ -29,9 +32,29 @@ const getUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res
-          .status(ERROR_CODE)
-          .send({ message: 'Некорректное значение id карты' });
+        res.status(ERROR_CODE).send({ message: 'Некорректное значение id' });
+        return;
+      }
+      res.status(ERROR_DEFAULT).send({ message: TEXT_ERROR_DEFAULT });
+    });
+};
+
+// ВОЗВРАЩАЕТ ИНФОРМАЦИЮ О ТЕКУЩЕМ ПОЛЬЗОВАТЕЛЕ
+const getInfoUser = (req, res) => {
+  User.findById({ _id: req.user._id })
+    .then((user) => {
+      console.log(_id);
+      if (!user) {
+        return res.status(ERROR_NOT_FOUND).send({
+          message: 'Запрашиваемый пользователь не найден',
+        });
+      }
+      return res.send(user);
+    })
+    .catch((err) => {
+      console.log(_id);
+      if (err.name === 'CastError') {
+        res.status(ERROR_CODE).send({ message: 'Некорректное значение id' });
         return;
       }
       res.status(ERROR_DEFAULT).send({ message: TEXT_ERROR_DEFAULT });
@@ -40,10 +63,24 @@ const getUser = (req, res) => {
 
 // СОЗДАЁТ ПОЛЬЗОВАТЕЛЯ
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const { name, about, avatar, email, password } = req.body;
 
-  User.create({ name, about, avatar })
-    .then((newUser) => res.send(newUser))
+  // хешируем пароль
+  bcrypt
+    .hash(password, 10)
+    .then((hash) =>
+      // eslint-disable-next-line implicit-arrow-linebreak
+      User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hash,
+      })
+    )
+    .then((newUser) => {
+      res.send(newUser);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res
@@ -95,10 +132,38 @@ const updateAvatar = (req, res) => {
     });
 };
 
+const login = (req, res) => {
+  const { email, password } = req.body;
+
+  User.findOne({ email })
+    .select('+password')
+    .then((user) => {
+      if (!user) {
+        const error = new Error('Неправильные email или пароль');
+        error.statusCode = 401;
+        throw error;
+      }
+      return bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
+          return Promise.reject(new Error('Неправильные email или пароль')); // хеши не совпали — отклоняем промис
+        }
+        const token = jwt.sign({ _id: user._id }, 'secret-key', {
+          expiresIn: '7d',
+        }); // создадим токен
+        res.send({ token }); // вернём токен
+      });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+    });
+};
+
 module.exports = {
   getUsers,
   getUser,
   createUser,
   updateProfile,
   updateAvatar,
+  login,
+  getInfoUser,
 };
