@@ -34,7 +34,7 @@ const getUser = (req, res, next) => {
 
 // ВОЗВРАЩАЕТ ИНФОРМАЦИЮ О ТЕКУЩЕМ ПОЛЬЗОВАТЕЛЕ
 const getInfoUser = (req, res, next) => {
-  User.findById(req.user._id)
+  User.findById({ _id: req.user._id })
     .then((user) => {
       if (!user) {
         throw new ErrorNotFound('Запрашиваемый пользователь не найден');
