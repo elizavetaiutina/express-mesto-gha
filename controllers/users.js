@@ -39,7 +39,7 @@ const getInfoUser = (req, res, next) => {
       if (!user) {
         throw new ErrorNotFound('Запрашиваемый пользователь не найден');
       }
-      return res.send(user);
+      return res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
