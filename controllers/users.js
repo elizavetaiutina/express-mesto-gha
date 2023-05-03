@@ -145,13 +145,12 @@ const login = (req, res, next) => {
       }
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) {
-          next(new ErrorUnauthorized('Неправильные email или пароль'));
-          return;
+          throw new ErrorUnauthorized('Неправильные email или пароль');
         }
         const token = jwt.sign({ _id: user._id }, 'secret-key', {
           expiresIn: '7d',
         }); // создадим токен
-        return res.send({ token }); // вернём токен
+        return res.status(200).send({ token }); // вернём токен
       });
     })
     .catch((err) => next(err));
