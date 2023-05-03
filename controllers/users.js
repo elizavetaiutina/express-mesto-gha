@@ -7,6 +7,28 @@ const ErrorNotFound = require('../utils/errors/ErrorNotFound');
 const ErrorConflict = require('../utils/errors/ErrorConflict');
 const ErrorUnauthorized = require('../utils/errors/ErrorUnauthorized');
 
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  User.findOne({ email })
+    .select('+password')
+    .then((user) => {
+      if (!user) {
+        throw new ErrorUnauthorized('Неправильные email или пароль');
+      }
+      return bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
+          throw new ErrorUnauthorized('Неправильные email или пароль');
+        }
+        const token = jwt.sign({ _id: user._id }, 'secret-key', {
+          expiresIn: '7d',
+        }); // создадим токен
+        return res.status(200).send({ token }); // вернём токен
+      });
+    })
+    .catch((err) => next(err));
+};
+
 // ВОЗВРАЩАЕТ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ
 const getUsers = (req, res, next) => {
   User.find({})
@@ -132,28 +154,6 @@ const updateAvatar = (req, res, next) => {
       }
       next(err);
     });
-};
-
-const login = (req, res, next) => {
-  const { email, password } = req.body;
-
-  User.findOne({ email })
-    .select('+password')
-    .then((user) => {
-      if (!user) {
-        throw new ErrorUnauthorized('Неправильные email или пароль');
-      }
-      return bcrypt.compare(password, user.password).then((matched) => {
-        if (!matched) {
-          throw new ErrorUnauthorized('Неправильные email или пароль');
-        }
-        const token = jwt.sign({ _id: user._id }, 'secret-key', {
-          expiresIn: '7d',
-        }); // создадим токен
-        return res.status(200).send({ token }); // вернём токен
-      });
-    })
-    .catch((err) => next(err));
 };
 
 module.exports = {
