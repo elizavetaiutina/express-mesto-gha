@@ -102,7 +102,7 @@ const updateProfile = (req, res, next) => {
       if (!updateUser) {
         throw new ErrorNotFound('Запрашиваемый пользователь не найден');
       }
-      res.send(updateUser);
+      return res.send(updateUser);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {

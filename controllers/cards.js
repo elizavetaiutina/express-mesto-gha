@@ -38,9 +38,7 @@ const deleteCard = (req, res, next) => {
       if (card.owner.toString() !== req.user._id) {
         throw new ErrorForbidden('Недостаточно прав для удаления карты');
       }
-      return Card.deleteOne({ _id: req.params.cardId }).then(() =>
-        res.send(`${card} удалена!`)
-      );
+      card.deleteOne().then(() => res.send(`Карточка удалена`));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
