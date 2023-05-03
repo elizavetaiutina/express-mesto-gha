@@ -1,23 +1,17 @@
 const Card = require('../models/card');
-const {
-  ERROR_CODE,
-  ERROR_NOT_FOUND,
-  ERROR_DEFAULT,
-  TEXT_ERROR_DEFAULT,
-} = require('../utils/constants');
+const ErrorBadRequest = require('../utils/errors/ErrorBadRequest');
+const ErrorNotFound = require('../utils/errors/ErrorNotFound');
+const ErrorForbidden = require('../utils/errors/ErrorForbidden');
 
 // ВОЗВРАЩАЕТ ВСЕ КАРТОЧКИ
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch(
-      () => res.status(ERROR_DEFAULT).send({ message: TEXT_ERROR_DEFAULT })
-      // eslint-disable-next-line function-paren-newline
-    );
+    .catch((err) => next(err));
 };
 
 // СОЗДАЁТ НОВУЮ КАРТОЧКУ
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { _id } = req.user;
   const { name, link } = req.body;
 
@@ -27,44 +21,38 @@ const createCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res
-          .status(ERROR_CODE)
-          .send({ message: 'Некорректно заполнены поля ввода' });
+        next(new ErrorBadRequest('Некорректно заполнены поля ввода'));
         return;
       }
-      res.status(ERROR_DEFAULT).send({ message: TEXT_ERROR_DEFAULT });
+      next(err);
     });
 };
 
 // УДАЛЯЕТ КАРТОЧКУ ПО ИДЕНТИФИКАТОРУ
-const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+const deleteCard = (req, res, next) => {
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
-        return res
-          .status(ERROR_NOT_FOUND)
-          .send({ message: 'Запрашиваемая карта не найдена' });
+        throw new ErrorNotFound('Запрашиваемая карта не найдена');
       }
       if (card.owner.toString() !== req.user._id) {
-        return res
-          .status(403)
-          .send({ message: 'Недостаточно прав для удаления карты' });
+        throw new ErrorForbidden('Недостаточно прав для удаления карты');
       }
-      return res.send(card);
+      return Card.deleteOne({ _id: req.params.cardId }).then(() =>
+        res.send(`${card} удалена!`)
+      );
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res
-          .status(ERROR_CODE)
-          .send({ message: 'Некорректное значение id карты' });
+        next(new ErrorBadRequest('Некорректное значение id карты'));
         return;
       }
-      res.status(ERROR_DEFAULT).send({ message: TEXT_ERROR_DEFAULT });
+      next(err);
     });
 };
 
 // ПОСТАВИТЬ ЛАЙК КАРТОЧКЕ
-const addLikeCard = (req, res) => {
+const addLikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -72,25 +60,21 @@ const addLikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res
-          .status(ERROR_NOT_FOUND)
-          .send({ message: 'Запрашиваемая карта не найдена' });
+        throw new ErrorNotFound('Запрашиваемая карта не найдена');
       }
       return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res
-          .status(ERROR_CODE)
-          .send({ message: 'Некорректное значение id карты' });
+        next(new ErrorBadRequest('Некорректное значение id карты'));
         return;
       }
-      res.status(ERROR_DEFAULT).send({ err, message: TEXT_ERROR_DEFAULT });
+      next(err);
     });
 };
 
 // УБРАТЬ ЛАЙК С КАРТОЧКИ
-const deleteLikeCard = (req, res) => {
+const deleteLikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -98,20 +82,16 @@ const deleteLikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res
-          .status(ERROR_NOT_FOUND)
-          .send({ message: 'Запрашиваемая карта не найдена' });
+        throw new ErrorNotFound('Запрашиваемая карта не найдена');
       }
       return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res
-          .status(ERROR_CODE)
-          .send({ message: 'Некорректное значение id карты' });
+        next(new ErrorBadRequest('Некорректное значение id карты'));
         return;
       }
-      res.status(ERROR_DEFAULT).send({ err, message: TEXT_ERROR_DEFAULT });
+      next(err);
     });
 };
 
