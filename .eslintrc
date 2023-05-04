@@ -29,7 +29,6 @@
         "peerDependencies": false,
         "packageDir": "./"
       }
-    ],
-    "plugins": ["import"]
+    ]
   }
 }

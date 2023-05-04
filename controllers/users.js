@@ -47,7 +47,7 @@ const getUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ErrorBadRequest('Некорректное значение id карты'));
+        next(new ErrorBadRequest('Некорректное значение id пользователя'));
         return;
       }
       next(err);
@@ -65,7 +65,7 @@ const getInfoUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ErrorBadRequest('Некорректное значение id карты'));
+        next(new ErrorBadRequest('Некорректное значение id пользователя'));
         return;
       }
       next(err);
@@ -79,15 +79,17 @@ const createUser = (req, res, next) => {
   // хешируем пароль
   bcrypt
     .hash(password, 10)
-    .then((hash) =>
-      // eslint-disable-next-line implicit-arrow-linebreak
-      User.create({
-        name,
-        about,
-        avatar,
-        email,
-        password: hash,
-      })
+    .then(
+      (hash) =>
+        // eslint-disable-next-line implicit-arrow-linebreak
+        User.create({
+          name,
+          about,
+          avatar,
+          email,
+          password: hash,
+        })
+      // eslint-disable-next-line function-paren-newline
     )
     .then((newUser) => {
       res.send({

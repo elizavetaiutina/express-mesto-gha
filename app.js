@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const router = require('./routes');
 const { errors } = require('celebrate');
+const router = require('./routes');
 
 const ErrorNotFound = require('./utils/errors/ErrorNotFound');
 const { login, createUser } = require('./controllers/users');

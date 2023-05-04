@@ -6,5 +6,3 @@ class ErrorUnauthorized extends Error {
 }
 
 module.exports = ErrorUnauthorized;
-
-// передан неверный логин или пароль. Также эту ошибку возвращает авторизационный middleware, если передан неверный JWT
