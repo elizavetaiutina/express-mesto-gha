@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 
+const { regExp } = require('../utils/constants');
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -18,6 +20,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default:
       'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    validate: {
+      validator: (value) => regExp.test(value),
+      message: 'Некорректно введен url',
+    },
   },
   email: {
     type: String,
